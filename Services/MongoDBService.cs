@@ -2,7 +2,6 @@
 using Mongo.API.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using static MongoDB.Driver.WriteConcern;
 
 namespace Mongo.API.Services;
 
