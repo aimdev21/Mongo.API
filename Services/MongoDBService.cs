@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Options;
+﻿using AutoMapper;
+using Microsoft.Extensions.Options;
+using Mongo.API.DTOs;
 using Mongo.API.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -8,27 +10,39 @@ namespace Mongo.API.Services;
 public class MongoDBService
 {
     private readonly IMongoCollection<Joke> _playlistCollection;
-    public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings)
+    private readonly IMapper _mapper;
+
+    public MongoDBService(IOptions<MongoDBSettings> mongoDBSettings, IMapper mapper)
     {
         MongoClient context = new MongoClient(mongoDBSettings.Value.ConnectionURI);
         IMongoDatabase database = context.GetDatabase(mongoDBSettings.Value.DatabaseName);
         _playlistCollection = database.GetCollection<Joke>(mongoDBSettings.Value.CollectionName);
+        _mapper = mapper;
     }
 
-    public async Task CreateAsync(Joke joke)
+    public async Task CreateAsync(JokeDTO jokeDTO)
     {
-        await _playlistCollection.InsertOneAsync(joke);
+        var result = _mapper.Map<Joke>(jokeDTO);
+        await _playlistCollection.InsertOneAsync(result);
     }
 
-    public async Task<List<Joke>> GetAsync()
+    public async Task<List<JokeDTO>> GetAsync()
     {
-        return await _playlistCollection.Find(new BsonDocument()).ToListAsync();
+        var result = await _playlistCollection.Find(new BsonDocument()).ToListAsync();
+        return _mapper.Map<List<JokeDTO>>(result);
     }
 
-    public async Task UpdateAsync(string id, Joke joke)
+    public async Task<JokeDTO> GetJokeByIdAsync(string id)
     {
         FilterDefinition<Joke> filter = Builders<Joke>.Filter.Eq("Id", id);
-        UpdateDefinition<Joke> update = Builders<Joke>.Update.Set(x => x.JokeQuestion, joke.JokeQuestion).Set(x => x.JokeAnswer, joke.JokeAnswer);
+        var result = await _playlistCollection.Find(filter).FirstOrDefaultAsync();
+        return _mapper.Map<JokeDTO>(result);
+    }
+
+    public async Task UpdateAsync(JokeDTO jokeDTO)
+    {
+        var filter = Builders<Joke>.Filter.Eq("Id", jokeDTO.Id);
+        var update = Builders<Joke>.Update.Set(x => x.JokeQuestion, jokeDTO.JokeQuestion).Set(x => x.JokeAnswer, jokeDTO.JokeAnswer);
         await _playlistCollection.UpdateOneAsync(filter, update);
     }
 

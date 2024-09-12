@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Mongo.API.DTOs;
 using Mongo.API.Models;
 using Mongo.API.Services;
 
@@ -16,23 +17,29 @@ public class JokeController : Controller
     }
 
     [HttpGet]
-    public async Task<List<Joke>> Get()
+    public async Task<List<JokeDTO>> Get()
     {
         return await _mongoDBService.GetAsync();
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] Joke joke)
+    [HttpGet("{id}")]
+    public async Task<JokeDTO> GetJokeById(string id)
     {
-        await _mongoDBService.CreateAsync(joke);
-        // return Ok();
-        return CreatedAtAction(nameof(Get), new { id = joke.Id }, joke);
+        return await _mongoDBService.GetJokeByIdAsync(id);
     }
 
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(string id, [FromBody] Joke joke)
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] JokeDTO jokeDTO)
     {
-        await _mongoDBService.UpdateAsync(id, joke);
+        await _mongoDBService.CreateAsync(jokeDTO);
+        // return Ok();
+        return CreatedAtAction(nameof(Get), new { id = jokeDTO.Id }, jokeDTO);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromBody] JokeDTO jokeDTO)
+    {
+        await _mongoDBService.UpdateAsync(jokeDTO);
         return Ok();
     }
 
