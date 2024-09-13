@@ -4,7 +4,7 @@ using Mongo.API.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // mongo dependencies
-builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDB"));
+builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
 builder.Services.AddSingleton<MongoDBService>();
 
 // Add services to the container.
