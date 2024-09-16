@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Mongo.API.DTOs;
 using Mongo.API.Models;
+using Mongo.API.MongoSettings;
 using MongoDB.Bson;
 using MongoDB.Driver;
 

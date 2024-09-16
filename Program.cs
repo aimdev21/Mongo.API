@@ -1,14 +1,9 @@
-using Mongo.API.Models;
-using Mongo.API.Services;
+using Mongo.API.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// mongo dependencies
-builder.Services.Configure<MongoDBSettings>(builder.Configuration.GetSection("MongoDBSettings"));
-builder.Services.AddSingleton<MongoDBService>();
-
-// Add services to the container.
-builder.Services.AddAutoMapper(typeof(Program));
+// Add services to the container(through the Extension method).
+builder.Services.AddApplicationServices(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
