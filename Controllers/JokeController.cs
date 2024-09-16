@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Mongo.API.DTOs;
-using Mongo.API.Models;
 using Mongo.API.Services;
-using System.Linq.Expressions;
 
 namespace Mongo.API.Controllers;
 
